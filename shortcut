@@ -1,0 +1,79 @@
+#!/bin/bash
+
+directory="/usr/share/shortcut-command"
+
+# check if directory exists
+if [[ ! -d "$directory" ]]; then
+    echo "create directory $directory"
+    sudo mkdir "$directory"
+fi
+
+# if there is no argument
+if [[ $# -eq 0 ]]; then
+    echo "usage: shortcut [<shortcut-name>|--add <shortcut-file> <shortcut-name>|--remove <shortcut-name>|--list]"
+    exit 1
+fi
+
+# if the first argument is --add
+if [[ "$1" = "--add" ]]; then
+    if [[ $# -lt 3 ]]; then
+        echo "usage: shortcut --add <shortcut-file> <shortcut-name>"
+        exit 1
+    else
+        file="$2"
+        name="$3"
+        if [[ -f "$file" ]]; then
+            if [[ -f "$directory/$name" ]]; then
+                echo "replace $directory/$name with $file"
+                sudo rm "$directory/$name"
+            else
+                echo "add $file to $directory"
+            fi
+            sudo mv "$file" "$directory/$name"
+        else
+            echo "$file does not exist"
+        fi
+        exit 0
+    fi
+fi
+
+# if the first argument is --remove
+if [[ "$1" = "--remove" ]]; then
+    if [[ $# -lt 2 ]]; then
+        echo "usage: shortcut --remove <shortcut-name>"
+        exit 1
+    else
+        name="$2"
+        if [[ -f "$directory/$name" ]]; then
+            echo "remove $directory/$name"
+            sudo rm "$directory/$name"
+        else
+            echo "$directory/$name does not exist"
+        fi
+        exit 0
+    fi
+fi
+
+# if the first argument is --list
+if [[ "$1" = "--list" ]]; then
+    echo "list of shortcuts:"
+    for file in "$directory"/*; do
+        echo "$(basename "$file")"
+    done
+    exit 0
+fi
+
+# if the first argument is --help
+if [[ "$1" = "--help" ]]; then
+    echo "usage: shortcut [<shortcut-name>|--add <shortcut-file> <shortcut-name>|--remove <shortcut-name>|--list]"
+    exit 0
+fi
+
+# otherwise
+file="$1"
+
+if [[ -f "$directory/$file" ]]; then
+    less "$directory/$file"
+else
+    echo "$1's shortcut does not exist"
+fi
