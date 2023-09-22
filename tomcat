@@ -1,0 +1,34 @@
+#! /bin/sh
+
+# This script to manupulate the tomcat
+
+# no arguments
+if [ $# -eq 0 ]; then
+    echo "Usage: tomcat [start|stop|restart|status]"
+    exit 1
+fi
+
+# startup
+if [ $1 = "start" ]; then
+    echo "Starting tomcat"
+    sudo /opt/tomcat/bin/startup.sh
+fi
+
+# shutdown
+if [ $1 = "stop" ]; then
+    echo "Stopping tomcat"
+    sudo /opt/tomcat/bin/shutdown.sh
+fi
+
+# restart
+if [ $1 = "restart" ]; then
+    echo "Restarting tomcat"
+    sudo /opt/tomcat/bin/shutdown.sh
+    sudo /opt/tomcat/bin/startup.sh
+fi
+
+# status
+if [ $1 = "status" ]; then
+    echo "Checking tomcat status"
+    sudo /opt/tomcat/bin/version.sh
+fi
